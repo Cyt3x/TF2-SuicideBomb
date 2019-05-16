@@ -29,7 +29,7 @@ int g_iTimer[MAXPLAYERS + 1];
 
 public void OnPluginStart()
 {
-	RegAdminCmd("sm_jihad", Command_Bomb, 0, "[SM] Usage: sm_jihad <seconds>");
+	RegAdminCmd("sm_jihad", Command_Bomb, ADMFLAG_ROOT, "[SM] Usage: sm_jihad <seconds>");
 }
 
 public OnMapStart() 
@@ -128,7 +128,7 @@ void SuicideBomb(float origin[3], float distance = 500.0, float damage = 500.0, 
         SDKHooks_TakeDamage(entity, inflictor, attacker, damage, damagetype, weapon, origin);
 	}
 
-	float 	location[3];
+	float location[3];
 	GetClientAbsOrigin(attacker, location);
 	
 	int color[4]={188,220,255,200};
