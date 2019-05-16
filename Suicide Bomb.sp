@@ -16,6 +16,7 @@ public void OnPluginStart()
 	RegAdminCmd("sm_jihad", Command_Bomb, 0, "[SM] Usage: sm_jihad <#userid|name>");
 }
 
+float g_iSpeedDuration = 3.0;
 public Action Command_Bomb(int client, int args)
 {
 	if (args < 1)
@@ -24,6 +25,14 @@ public Action Command_Bomb(int client, int args)
 		return Plugin_Handled;
 	}
 	
+	if(!IsPlayerAlive(client))
+	{
+		ReplyToCommand(client, "[SM] Usage: Player must be alive.");
+		return Plugin_Handled;		
+	}
+	
+	TF2_AddCondition(client, TFCond_SpeedBuffAlly, g_iSpeedDuration);
+	
 	float vecOrigin[3];
 	GetClientAbsOrigin(client, vecOrigin);
 
@@ -31,14 +40,13 @@ public Action Command_Bomb(int client, int args)
 	float damage = 400.0;
 	PrintToChat(client, "%.2f", distance);
 	PrintToChat(client, "%.2f", damage);
-
-	DamageArea(vecOrigin, distance, damage, client, 0, 0, DMG_GENERIC, -1);
-	ForcePlayerSuicide(client);
 	
-	return Plugin_Handled; 
+	SuicideBomb(vecOrigin, distance, damage, client, 0, 0, DMG_BLAST, -1);
+	
+	return Plugin_Handled;
 }
 
-stock void DamageArea(float origin[3], float distance = 500.0, float damage = 500.0, int attacker = 0, int inflictor = 0, int team = 0, int damagetype = DMG_GENERIC, int weapon = -1)
+stock void SuicideBomb(float origin[3], float distance = 500.0, float damage = 500.0, int attacker = 0, int inflictor = 0, int team = 0, int damagetype = DMG_BLAST, int weapon = -1)
 {
     if (distance <= 0.0 || damage <= 0.0)
         return;
@@ -70,4 +78,5 @@ stock void DamageArea(float origin[3], float distance = 500.0, float damage = 50
 
         SDKHooks_TakeDamage(entity, inflictor, attacker, damage, damagetype, weapon, origin);
     }
+    ForcePlayerSuicide(attacker);
 }
